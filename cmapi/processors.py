@@ -84,12 +84,13 @@ class Quickscrape(Processor):
                 if k not in ['-d','--scraperdir','-o','--output','-f','--outformat']:
                     cls._output['command'].append(k)
                     cls._output['command'].append(kwargs[key])
-                    cls._output['command'].append('--scraperdir')
-                    cls._output['command'].append('/home/cloo/repl/apps/contentmine/src/journal-scrapers/scrapers/')
-                    cls._output['command'].append('--output')
-                    cls._output['command'].append('/home/cloo/storage_service/public')
-                    cls._output['command'].append('--outformat')
-                    cls._output['command'].append('bibjson')
+            cls._output['command'].append('--scraperdir')
+            # for production dev should be repl/apps - and dirs should be read from config
+            cls._output['command'].append('/home/cloo/dev/contentmine/src/journal-scrapers/scrapers/')
+            cls._output['command'].append('--output')
+            cls._output['command'].append('/home/cloo/storage_service/public')
+            cls._output['command'].append('--outformat')
+            cls._output['command'].append('bibjson')
         else:
             cls._output['command'].append('--help')
 
