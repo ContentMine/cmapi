@@ -124,11 +124,9 @@ class Norma(Processor):
     @classmethod
     def _cmd(cls, **kwargs):
         cls._output['command'] = ['norma']
-        # if no -x make it this
-        # '/opt/contentmine/src/norma/src/main/resources/org/xmlcml/norma/pubstyle/nlm/toHtml.xsl'
         if len(kwargs.keys()) > 0 and '-x' not in kwargs.keys() and 'xsl' not in kwargs.keys() and '--xsl' not in kwargs.keys() and 'x' not in kwargs.keys():
             cls._output['command'].append('--xsl')
-            cls._output['command'].append('nlm')
+            cls._output['command'].append('/org/xmlcml/norma/pubstyle/nlm/toHtml.xsl')
         for key in kwargs.keys():
             if not key.startswith('-'): k = '-' + key
             if len(key) > 2: k = '-' + k
