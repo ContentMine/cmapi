@@ -85,7 +85,6 @@ class Quickscrape(Processor):
                     cls._output['command'].append(k)
                     cls._output['command'].append(kwargs[key])
             cls._output['command'].append('--scraperdir')
-            # for production dev should be repl/apps - and dirs should be read from config
             cls._output['command'].append('/home/cloo/dev/contentmine/src/journal-scrapers/scrapers/')
             cls._output['command'].append('--output')
             cls._output['command'].append('/home/cloo/storage_service/public')
