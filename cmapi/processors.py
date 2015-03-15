@@ -99,14 +99,16 @@ class Quickscrape(Processor):
         turl = kwargs.get('u',kwargs.get('-u',kwargs.get('--url',None)))
         if turl is not None:
             slug = turl.replace('://','_').replace('/','_').replace(':','')
-            uid = uuid.uuid4().hex
-            cls._output['store'] = 'http://store.cottagelabs.com/' + uid
+            cls._output['cid'] = uuid.uuid4().hex
+            cls._output['store'] = 'http://store.cottagelabs.com/' + cls._output['cid']
+            cls._output['files'] = []
             tmpdir = '/home/cloo/qstmp/' + slug
-            outdir = '/home/cloo/storage_service/public/' + uid
+            outdir = '/home/cloo/storage_service/public/' + cls._output['cid']
             if not os.path.exists(outdir):
                 os.makedirs(outdir)
             for fl in os.listdir(tmpdir):
                 shutil.copy(os.path.join(tmpdir, fl), outdir)
+                cls._output['files'].append(cls._output['store'] + '/' + fl)
             shutil.rmtree(tmpdir)
 
         
