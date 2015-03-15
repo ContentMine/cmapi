@@ -87,7 +87,7 @@ class Quickscrape(Processor):
             cls._output['command'].append('--scraperdir')
             cls._output['command'].append('/home/cloo/dev/contentmine/src/journal-scrapers/scrapers/')
             cls._output['command'].append('--output')
-            cls._output['command'].append('/home/cloo/storage_service/public')
+            cls._output['command'].append('/home/cloo/qstmp/')
             cls._output['command'].append('--outformat')
             cls._output['command'].append('bibjson')
         else:
@@ -96,15 +96,17 @@ class Quickscrape(Processor):
 
     @classmethod
     def after(cls, **kwargs):
-        pass
-        # look for a record with these details already present
-        '''slug = url.replace('://','_').replace('/','_').replace(':','')
-        rec = json.load(open(outputdirectory + '/' + slug + '/bib.json','r'))
-
-        # move output to correct storage location
-        for fl in os.listdir(outputdirectory + '/' + slug):
-            shutil.copy(os.path.join(outputdirectory + '/' + slug, fl), outputdirectory)
-        shutil.rmtree(outputdirectory + '/' + slug)'''
+        try:
+            turl = kwargs.get('u',kwargs.get('-u',kwargs.get('--url',None)))
+            if turl is not None:
+                slug = url.replace('://','_').replace('/','_').replace(':','')
+                uid = uuid.uuid4().hex
+                cls._output['store'] = 'http://store.cottagelabs.com/' + uid
+                for fl in os.listdir('/home/cloo/qstmp/' + slug):
+                    shutil.copy(os.path.join('/home/cloo/qstmp/' + slug, fl), '/home/cloo/storage_service/public/' + uid)
+                #shutil.rmtree('/home/cloo/qstmp/' + slug)
+        except:
+            pass
 
         
         
