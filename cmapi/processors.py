@@ -102,9 +102,15 @@ class Quickscrape(Processor):
                 slug = url.replace('://','_').replace('/','_').replace(':','')
                 uid = uuid.uuid4().hex
                 cls._output['store'] = 'http://store.cottagelabs.com/' + uid
-                for fl in os.listdir('/home/cloo/qstmp/' + slug):
-                    shutil.copy(os.path.join('/home/cloo/qstmp/' + slug, fl), '/home/cloo/storage_service/public/' + uid)
-                #shutil.rmtree('/home/cloo/qstmp/' + slug)
+                tmpdir = '/home/cloo/qstmp/' + slug
+                outdir = '/home/cloo/storage_service/public/' + uid
+                print slug
+                if not os.path.exists(outdir):
+                    os.makedirs(outdir)
+                for fl in os.listdir(tmpdir):
+                    print fl
+                    shutil.copy(os.path.join(tmpdir, fl), outdir)
+                #shutil.rmtree(tmpdir)
         except:
             pass
 
