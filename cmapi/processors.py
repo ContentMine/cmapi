@@ -28,7 +28,8 @@ class Processor(object):
             "Do not provide any output parameters - these are controlled by the API server.",
             "Similarly any paramaters telling the software where to find any local files it should expect will be handled by the API server.",
             "Output files will be saved to a folder and a URL will be provided for access to them.",
-            "Any direct output from the executed command will be returned in the response object, which is always a successful return of JSON content."
+            "Any direct output from the executed command will be returned in the response object, which is always a successful return of JSON content.",
+            "If a Catalogue ID (a cid) is available for a work being processed, it can be passed as the cid or --cid parameter. It will then be used to identify catalogue records and storage directories where necessary, so input parameters can be skipped."
         ]
     }
     
@@ -123,6 +124,9 @@ class Norma(Processor):
         for key in kwargs.keys():
             if not key.startswith('-'): k = '-' + key
             if len(key) > 2: k = '-' + k
+            if k == '--cid':
+                cls._output['command'].append('-q')
+                cls._output['command'].append('/home/cloo/storage_service/public/' + str(kwargs['cid']))
             cls._output['command'].append(k)
             cls._output['command'].append(kwargs[key])
 
