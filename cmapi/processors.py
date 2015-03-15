@@ -127,8 +127,9 @@ class Norma(Processor):
             if k == '--cid':
                 cls._output['command'].append('-q')
                 cls._output['command'].append('/home/cloo/storage_service/public/' + str(kwargs['cid']))
-            cls._output['command'].append(k)
-            cls._output['command'].append(kwargs[key])
+            else:
+                cls._output['command'].append(k)
+                cls._output['command'].append(kwargs[key])
 
 
 
