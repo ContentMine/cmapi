@@ -56,6 +56,11 @@ class Processor(object):
             
     @classmethod
     def run(cls, before=True,after=True,store=True,save=True,**kwargs):
+        # check for dodgy characters in the kwargs
+        for k in kwargs.keys():
+            if ';' in k or ';' in kwargs[k]:
+                cls._output['errors'] = ['Sorry, illegal character found in args.']
+                return cls._output
         if before: cls.before(**kwargs)
         cls._cmd(**kwargs)
         try:
@@ -121,12 +126,20 @@ class Norma(Processor):
         cls._output['command'] = ['norma']
         # if no -x make it this
         # '/opt/contentmine/src/norma/src/main/resources/org/xmlcml/norma/pubstyle/nlm/toHtml.xsl'
+        if len(kwargs.keys()) > 0 and '-x' not in kwargs.keys() and 'xsl' not in kwargs.keys() and '--xsl' not in kwargs.keys() and 'x' not in kwargs.keys():
+            cls._output['command'].append('--xsl')
+            cls._output['command'].append('nlm')
         for key in kwargs.keys():
             if not key.startswith('-'): k = '-' + key
             if len(key) > 2: k = '-' + k
             if k == '--cid':
+                cls._output['cid'] = kwargs[key]
                 cls._output['command'].append('-q')
-                cls._output['command'].append('/home/cloo/storage_service/public/' + str(kwargs['cid']))
+                cls._output['command'].append('/home/cloo/storage_service/public/' + str(kwargs[key]))
+                cls._output['command'].append('--input')
+                cls._output['command'].append('/home/cloo/storage_service/public/' + str(kwargs[key]) + '/fulltext.html')
+                cls._output['command'].append('--output')
+                cls._output['command'].append('/home/cloo/storage_service/public/' + str(kwargs[key]) + '/scholarly.html')
             else:
                 cls._output['command'].append(k)
                 cls._output['command'].append(kwargs[key])
