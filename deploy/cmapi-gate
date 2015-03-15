@@ -1,0 +1,31 @@
+# redirect to SSL version
+server {
+    listen          80;
+    server_name     contentmine.cottagelabs.com;
+
+    access_log /var/log/nginx/cmapi.access.log;
+    error_log /var/log/nginx/cmapi.error.log;
+
+    return 301 https://$host$request_uri;
+}
+
+# actually serve the app via SSL
+server {
+    listen          443 ssl;
+    server_name     contentmine.cottagelabs.com;
+
+    access_log /var/log/nginx/cmapi.access.log;
+    error_log /var/log/nginx/cmapi.error.log;
+
+    include includes/cl-wildcard-ssl.conf;
+
+    proxy_read_timeout 600s;
+
+    location / {
+        proxy_pass http://apps;
+        proxy_redirect off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
