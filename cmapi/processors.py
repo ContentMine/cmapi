@@ -97,8 +97,9 @@ class Quickscrape(Processor):
     @classmethod
     def after(cls, **kwargs):
         turl = kwargs.get('u',kwargs.get('-u',kwargs.get('--url',None)))
+        print turl
         if turl is not None:
-            slug = url.replace('://','_').replace('/','_').replace(':','')
+            slug = turl.replace('://','_').replace('/','_').replace(':','')
             uid = uuid.uuid4().hex
             cls._output['store'] = 'http://store.cottagelabs.com/' + uid
             tmpdir = '/home/cloo/qstmp/' + slug
