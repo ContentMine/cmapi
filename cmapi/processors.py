@@ -69,62 +69,6 @@ class Processor(object):
         return cls._output
 
     
-class Amiregex(Processor):
-    @classmethod
-    def _cmd(cls, **kwargs):
-        cls._output['command'] = ['/usr/bin/ami2-regex']
-        # if regex and no -g make it this /opt/contentmine/src/site/portality/ami-regexes/concatenated.xml
-        for key in kwargs.keys():
-            if not key.startswith('-'): k = '-' + key
-            if len(key) > 2: k = '-' + k
-            cls._output['command'].append(k)
-            cls._output['command'].append(kwargs[key])
-    
-    @classmethod
-    def after(cls, **kwargs):
-        pass
-        # read the results and transform to object
-        '''facts = []
-        results_file = outputdirectory + '/' + cmd + '_results.xml'
-
-        if cmd == 'species':
-            tree = etree.parse(results_file).getroot()
-            elems = tree.find('results')[1:]
-            for sub in elems:
-                part = sub.find('eic')
-                doc = {'eic': part.get('xpath')}
-                doc["pre"] = part.find("pre").text
-                doc["fact"] = part.find("value").text
-                doc["post"] = part.find("post").text
-                facts.append(doc)
-
-        elif cmd == 'regex':
-            ns = etree.FunctionNamespace("http://www.xml-cml.org/ami")
-            ns.prefix = "zf"
-            tree = etree.parse(results_file)
-            hits = tree.xpath('//zf:hit')
-            for hit in hits:
-                doc = {}
-                doc["pre"] = hit.get("pre")
-                doc["fact"] = hit.get("word")
-                doc["post"] = hit.get("post")
-                facts.append(doc)
-                
-        shutil.move('target/fulltext.xml/results.xml', storagedirectory + '/' + cmd + '_results.xml')'''
-
-class Norma(Processor):
-    @classmethod
-    def _cmd(cls, **kwargs):
-        cls._output['command'] = ['norma']
-        # if no -x make it this
-        # '/opt/contentmine/src/norma/src/main/resources/org/xmlcml/norma/pubstyle/nlm/toHtml.xsl'
-        for key in kwargs.keys():
-            if not key.startswith('-'): k = '-' + key
-            if len(key) > 2: k = '-' + k
-            cls._output['command'].append(k)
-            cls._output['command'].append(kwargs[key])
-
-
 
         
 class Quickscrape(Processor):
@@ -144,6 +88,8 @@ class Quickscrape(Processor):
                     cls._output['command'].append('/home/cloo/storage_service/public')
                     cls._output['command'].append('--outformat')
                     cls._output['command'].append('bibjson')
+        else:
+            cls._output['command'].append('--help')
 
 
     @classmethod
@@ -157,3 +103,65 @@ class Quickscrape(Processor):
         for fl in os.listdir(outputdirectory + '/' + slug):
             shutil.copy(os.path.join(outputdirectory + '/' + slug, fl), outputdirectory)
         shutil.rmtree(outputdirectory + '/' + slug)'''
+
+        
+        
+
+class Norma(Processor):
+    @classmethod
+    def _cmd(cls, **kwargs):
+        cls._output['command'] = ['norma']
+        # if no -x make it this
+        # '/opt/contentmine/src/norma/src/main/resources/org/xmlcml/norma/pubstyle/nlm/toHtml.xsl'
+        for key in kwargs.keys():
+            if not key.startswith('-'): k = '-' + key
+            if len(key) > 2: k = '-' + k
+            cls._output['command'].append(k)
+            cls._output['command'].append(kwargs[key])
+
+
+
+            
+class Amiregex(Processor):
+    @classmethod
+    def _cmd(cls, **kwargs):
+        cls._output['command'] = ['/usr/bin/ami2-regex']
+        # if regex and no -g make it this /opt/contentmine/src/site/portality/ami-regexes/concatenated.xml
+        for key in kwargs.keys():
+            if not key.startswith('-'): k = '-' + key
+            if len(key) > 2: k = '-' + k
+            cls._output['command'].append(k)
+            cls._output['command'].append(kwargs[key])
+    
+    @classmethod
+    def after(cls, **kwargs):
+        pass
+        # read the results and transform to object
+        '''facts = []
+        results_file = outputdirectory + '/' + cmd + '_results.xml'
+
+        ns = etree.FunctionNamespace("http://www.xml-cml.org/ami")
+        ns.prefix = "zf"
+        tree = etree.parse(results_file)
+        hits = tree.xpath('//zf:hit')
+        for hit in hits:
+            doc = {}
+            doc["pre"] = hit.get("pre")
+            doc["fact"] = hit.get("word")
+            doc["post"] = hit.get("post")
+            facts.append(doc)
+                
+        shutil.move('target/fulltext.xml/results.xml', storagedirectory + '/' + cmd + '_results.xml')'''
+
+        
+class Amiwords(Processor):
+    @classmethod
+    def _cmd(cls, **kwargs):
+        cls._output['command'] = ['/usr/bin/ami2-words']
+        for key in kwargs.keys():
+            if not key.startswith('-'): k = '-' + key
+            if len(key) > 2: k = '-' + k
+            cls._output['command'].append(k)
+            cls._output['command'].append(kwargs[key])
+
+            

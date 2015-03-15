@@ -1,6 +1,7 @@
 
 import os, requests, json, uuid, inspect
 from functools import wraps
+from datetime import datetime
 
 from flask import Flask, request, make_response, abort
 from flask.ext.login import LoginManager, current_user, login_user
@@ -18,6 +19,9 @@ def create_app():
     if os.path.exists(config_path):
         app.config.from_pyfile(config_path)
     login_manager.setup_app(app)
+    if requests.head(app.config['FACT_API']).status_code != 200:
+        requests.post(app.config['FACT_API'])
+        requests.put(app.config['MAPPING_URL'], json.dumps(app.config['MAPPING']))
     return app
 
 app = create_app()
@@ -132,7 +136,10 @@ def factdirect(ident=None):
             for k in inp.keys():
                 rec[k] = inp[k]
         if 'id' not in rec: rec['id'] = uuid.uuid4().hex
-        # TODO: should save datetime and user doing this action
+        rec['updated_date'] = datetime.now().strftime("%Y-%m-%d %H%M")
+        if 'created_date' not in rec:
+            rec['created_date'] = datetime.now().strftime("%Y-%m-%d %H%M")
+        # TODO: save user doing this action
         return requests.post(app.config['FACT_API'] + rec['id'], data=json.dumps(rec))
 
 
