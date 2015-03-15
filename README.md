@@ -1,0 +1,2 @@
+# cmapi
+The ContentMine API
