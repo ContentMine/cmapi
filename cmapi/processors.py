@@ -66,6 +66,8 @@ class Processor(object):
         if after: cls.after(**kwargs)
         if not isinstance(cls._output['errors'],dict) and not isinstance(cls._output['errors'],list):
             cls._output['errors'] = [i for i in cls._output['errors'].split('\n') if len(i) > 0]
+        if not isinstance(cls._output['output'],dict) and not isinstance(cls._output['output'],list) and '\n' in cls._output['output']:
+            cls._output['output'] = [i for i in cls._output['output'].split('\n') if len(i) > 0]
         return cls._output
 
     
