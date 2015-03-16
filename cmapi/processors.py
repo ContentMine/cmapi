@@ -57,6 +57,7 @@ class Processor(object):
     @classmethod
     def run(cls, before=True,after=True,store=True,save=True,**kwargs):
         # check for dodgy characters in the kwargs
+        if 'callback' in kwargs: del kwargs['callback']
         for k in kwargs.keys():
             if ';' in k or ';' in kwargs[k]:
                 cls._output['errors'] = ['Sorry, illegal character found in args.']
