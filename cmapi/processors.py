@@ -104,7 +104,7 @@ class Quickscrape(Processor):
 
     @classmethod
     def after(cls, **kwargs):
-        turl = kwargs.get('u',kwargs.get('-u',kwargs.get('--url',None)))
+        turl = kwargs.get('u',kwargs.get('-u',kwargs.get('--url',kwargs.get('url',None))))
         if turl is not None:
             slug = turl.replace('://','_').replace('/','_').replace(':','')
             cls._output['cid'] = uuid.uuid4().hex
