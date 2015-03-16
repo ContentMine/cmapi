@@ -70,7 +70,7 @@ def rjson(f):
     def decorated_function(*args, **kwargs):
         callback = request.args.get('callback', False)
         if callback:
-            resp = make_response( str(callback) + '(' + str(f(*args,**kwargs).data) + ')' )
+            resp = make_response( str(callback) + '(' + str(f(*args,**kwargs)) + ')' )
             resp.mimetype='application/javascript'
         else:
             res = f(*args, **kwargs)
