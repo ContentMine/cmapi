@@ -63,25 +63,13 @@ def page_not_found(e):
     return 'Unauthorised', 401
         
         
-def jsonp(f):
-    """Wraps JSONified output for JSONP"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        callback = request.args.get('callback', False)
-        if callback:
-            content = str(callback) + '(' + str(f(*args,**kwargs).data) + ')'
-            return current_app.response_class(content, mimetype='application/javascript')
-        else:
-            return f(*args, **kwargs)
-    return decorated_function
-
 def rjson(f):
     # wraps output as a JSON response, with JSONP if necessary
     @wraps(f)
     def decorated_function(*args, **kwargs):
         callback = request.args.get('callback', False)
         if callback:
-            content = str(callback) + '(' + str(f(*args,**kwargs).data) + ')'
+            content = str(callback) + '(' + str(f(*args,**kwargs)) + ')'
             return current_app.response_class(content, mimetype='application/javascript')
         else:
             res = f(*args, **kwargs)
