@@ -12,6 +12,8 @@ with something useful, nothing would happen anyway.
 Processors can also overwrite run if necessary
 Each processor class should be able to be called and return output and delete anything it put on disk by default
 It can also be programmed using the available overwriteable methods to store the stuff it put on disk somewhere else
+
+Make sure to use class names that start with one upper case letter and the rest lower case.
 '''
 
 import uuid, subprocess, os, shutil, json, requests
@@ -107,7 +109,7 @@ class Quickscrape(Processor):
         turl = kwargs.get('u',kwargs.get('-u',kwargs.get('--url',kwargs.get('url',None))))
         if turl is not None:
             slug = turl.replace('://','_').replace('/','_').replace(':','')
-            cls._output['cid'] = uuid.uuid4().hex
+            cls._output['cid'] = kwargs.get('cid',uuid.uuid4().hex)
             cls._output['store'] = 'http://store.cottagelabs.com/' + cls._output['cid']
             cls._output['files'] = []
             tmpdir = '/home/cloo/qstmp/' + slug
@@ -161,9 +163,8 @@ class Amiregex(Processor):
     @classmethod
     def after(cls, **kwargs):
         pass
-        # read the results and transform to object
-        '''facts = []
-        results_file = outputdirectory + '/' + cmd + '_results.xml'
+        '''cls._output['facts'] = []
+        results_file = /home/cloo/storage_service/public/ + cmd + '_results.xml'
 
         ns = etree.FunctionNamespace("http://www.xml-cml.org/ami")
         ns.prefix = "zf"
@@ -174,8 +175,8 @@ class Amiregex(Processor):
             doc["pre"] = hit.get("pre")
             doc["fact"] = hit.get("word")
             doc["post"] = hit.get("post")
-            facts.append(doc)
-                
+            cls._output['facts'].append(doc)
+        
         shutil.move('target/fulltext.xml/results.xml', storagedirectory + '/' + cmd + '_results.xml')'''
 
         
@@ -190,3 +191,41 @@ class Amiwords(Processor):
             cls._output['command'].append(kwargs[key])
 
             
+class Retrieve(Processor):
+    @classmethod
+    def _cmd(cls, **kwargs):
+        cls._output['command'] = ['wget']
+        if len(kwargs) > 0:
+            cls._output['cid'] = kwargs.get('cid',uuid.uuid4().hex)
+            cls._output['store'] = 'http://store.cottagelabs.com/' + cls._output['cid']
+            storedir = '/home/cloo/storage_service/public/' + cls._output['cid']
+            if not os.path.exists(outdir):
+                os.makedirs(outdir)
+            if 'url' in kwargs.keys():
+                cls._output['command'].append(kwargs[key])
+                cls._output['command'].append('-o')
+                cls._output['command'].append(storedir + '/' + kwargs['url'].split('/')[-1])
+            
+    @classmethod
+    def after(cls, **kwargs):
+        turl = kwargs.get('u',kwargs.get('-u',kwargs.get('--url',kwargs.get('url',None))))
+        if turl is not None:
+            cls._output['files'] = []
+            storedir = '/home/cloo/storage_service/public/' + cls._output['cid']
+            for fl in os.listdir(storedir):
+                if fl.endswith('.pdf'):
+                    try:
+                        pcmd = [
+                            'pdftotext',
+                            os.path.join(storedir, fl),
+                            os.path.join(storedir, fl).replace('.pdf','.txt')
+                        ]
+                        p = subprocess.Popen(pcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        cls._output['output'], cls._output['errors'] = p.communicate()
+                    except Exception, e:
+                        cls._output['output'] = {}
+                        cls._output['errors'] = [str(e)]
+            for fl in os.listdir(storedir):
+                cls._output['files'].append(cls._output['store'] + '/' + fl)
+
+                

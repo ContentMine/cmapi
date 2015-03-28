@@ -3,7 +3,7 @@ import os, requests, json, uuid, inspect
 from functools import wraps
 from datetime import datetime
 
-from flask import Flask, request, make_response, abort
+from flask import Flask, request, make_response, current_app, abort
 from flask.ext.login import LoginManager, current_user, login_user
 
 from cmapi import settings, processors
@@ -63,21 +63,32 @@ def page_not_found(e):
     return 'Unauthorised', 401
         
         
-        
+def jsonp(f):
+    """Wraps JSONified output for JSONP"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        callback = request.args.get('callback', False)
+        if callback:
+            content = str(callback) + '(' + str(f(*args,**kwargs).data) + ')'
+            return current_app.response_class(content, mimetype='application/javascript')
+        else:
+            return f(*args, **kwargs)
+    return decorated_function
+
 def rjson(f):
     # wraps output as a JSON response, with JSONP if necessary
     @wraps(f)
     def decorated_function(*args, **kwargs):
         callback = request.args.get('callback', False)
         if callback:
-            resp = make_response( str(callback) + '(' + str(f(*args,**kwargs)) + ')' )
-            resp.mimetype='application/javascript'
+            content = str(callback) + '(' + str(f(*args,**kwargs).data) + ')'
+            return current_app.response_class(content, mimetype='application/javascript')
         else:
             res = f(*args, **kwargs)
             if not isinstance(res,dict) and not isinstance(res,list): res = [i for i in str(res).split('\n') if len(i) > 0]
             resp = make_response( json.dumps( res, sort_keys=True ) )
             resp.mimetype = "application/json"
-        return resp
+            return resp
     return decorated_function
 
 # add checks once account auth in place    
