@@ -192,8 +192,8 @@ class Retrieve(Processor):
             self.output['cid'] = kwargs.get('cid',uuid.uuid4().hex)
             self.output['store'] = 'http://store.cottagelabs.com/' + self.output['cid']
             storedir = current_app.config['STORAGE_DIR'] + self.output['cid']
-            if not os.path.exists(outdir):
-                os.makedirs(outdir)
+            if not os.path.exists(storedir):
+                os.makedirs(storedir)
             if 'url' in kwargs.keys():
                 self.output['command'].append(kwargs[key])
                 self.output['command'].append('-o')
