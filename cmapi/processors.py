@@ -126,8 +126,10 @@ class Norma(Processor):
     def _cmd(self, **kwargs):
         self.output['command'] = ['norma']
         if len(kwargs.keys()) > 0 and '-x' not in kwargs.keys() and 'xsl' not in kwargs.keys() and '--xsl' not in kwargs.keys() and 'x' not in kwargs.keys():
-            self.output['command'].append('--xsl')
-            self.output['command'].append('/org/xmlcml/norma/pubstyle/nlm/toHtml.xsl')
+            #self.output['command'].append('--xsl')
+            #self.output['command'].append('/org/xmlcml/norma/pubstyle/nlm/toHtml.xsl')
+            self.output['command'].append('-x')
+            self.output['command'].append('nlm2html')
         for key in kwargs.keys():
             if not key.startswith('-'): k = '-' + key
             if len(key) > 2: k = '-' + k
@@ -136,7 +138,7 @@ class Norma(Processor):
                 self.output['command'].append('-q')
                 self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]))
                 self.output['command'].append('--input')
-                self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]) + '/fulltext.html')
+                self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]) + '/fulltext.xml')
                 self.output['command'].append('--output')
                 self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]) + '/scholarly.html')
             else:
@@ -144,6 +146,14 @@ class Norma(Processor):
                 self.output['command'].append(kwargs[key])
 
 
+'''how many -x are there? is there a list? - look in stylesheetbyname.xml
+
+/norma/src/main/resources ... /org/xmlcml/norma/pubstyle/stylesheetByName.xml
+<stylesheetList>
+  <stylesheet name="nlm2html">/org/xmlcml/norma/pubstyle/nlm/toHtml.xsl</stylesheet>
+  <stylesheet name="bmc2html">/org/xmlcml/norma/pubstyle/bmc/xml2html.xsl</stylesheet>
+  <stylesheet name="hind2xml">/org/xmlcml/norma/pubstyle/hindawi/groupMajorSections.xsl</stylesheet>
+</stylesheetList>'''
 
             
 class Amiregex(Processor):
@@ -187,13 +197,15 @@ class Amiwords(Processor):
             
 class Retrieve(Processor):
     def _cmd(self, **kwargs):
-        self.output['command'] = ['wget']
+        self.output['command'] = ['curl']
         if len(kwargs) > 0:
             self.output['cid'] = kwargs.get('cid',uuid.uuid4().hex)
             self.output['store'] = 'http://store.cottagelabs.com/' + self.output['cid']
             storedir = current_app.config['STORAGE_DIR'] + self.output['cid']
             if not os.path.exists(storedir):
                 os.makedirs(storedir)
+            self.output['command'].append('-X')
+            self.output['command'].append('GET')
             if 'url' in kwargs.keys():
                 self.output['command'].append(kwargs['url'])
                 self.output['command'].append('-o')
