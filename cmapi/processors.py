@@ -40,7 +40,8 @@ class Processor(object):
     def _cmd(self, **kwargs):
         self.output['command'] = []
         for key in kwargs.keys():
-            if not key.startswith('-'): k = '-' + key
+            k = key
+            if not key.startswith('-'): k = '-' + k
             if len(key) > 2: k = '-' + k
             self.output['command'].append(k)
             self.output['command'].append(kwargs[key])
@@ -67,7 +68,6 @@ class Processor(object):
         except Exception, e:
             self.output['output'] = {}
             self.output['errors'] = [str(e)]
-        print self.output
         if after: self.after(**kwargs)
         if not isinstance(self.output['errors'],dict) and not isinstance(self.output['errors'],list):
             self.output['errors'] = [i for i in self.output['errors'].split('\n') if len(i) > 0]
@@ -83,7 +83,8 @@ class Quickscrape(Processor):
         self.output['command'] = ['quickscrape']
         if len(kwargs) > 0:
             for key in kwargs.keys():
-                if not key.startswith('-'): k = '-' + key
+                k = key
+                if not key.startswith('-'): k = '-' + k
                 if len(key) > 2: k = '-' + k
                 if k not in ['-d','--scraperdir','-o','--output','-f','--outformat']:
                     self.output['command'].append(k)
@@ -131,7 +132,8 @@ class Norma(Processor):
             self.output['command'].append('-x')
             self.output['command'].append('nlm2html')
         for key in kwargs.keys():
-            if not key.startswith('-'): k = '-' + key
+            k = key
+            if not key.startswith('-'): k = '-' + k
             if len(key) > 2: k = '-' + k
             if k == '--cid':                            
                 self.output['cid'] = kwargs[key]
@@ -176,7 +178,8 @@ class Amiregex(Processor):
             self.output['command'].append('-r.r')
             self.output['command'].append(current_app.config['REGEXES_DIR'] + 'concatenated.xml')
         for key in kwargs.keys():
-            if not key.startswith('-'): k = '-' + key
+            k = key
+            if not key.startswith('-'): k = '-' + k
             if len(key) > 2 and key != '-r.r': k = '-' + k
             if k == '--cid':
                 self.output['cid'] = kwargs[key]
@@ -220,7 +223,8 @@ class Amiwords(Processor):
     def _cmd(self, **kwargs):
         self.output['command'] = ['/usr/bin/ami2-words']
         for key in kwargs.keys():
-            if not key.startswith('-'): k = '-' + key
+            k = key
+            if not key.startswith('-'): k = '-' + k
             if len(key) > 2: k = '-' + k
             self.output['command'].append(k)
             self.output['command'].append(kwargs[key])
