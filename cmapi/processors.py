@@ -133,7 +133,7 @@ class Norma(Processor):
         for key in kwargs.keys():
             if not key.startswith('-'): k = '-' + key
             if len(key) > 2: k = '-' + k
-            if k == '--cid':
+            if k == '--cid':                            
                 self.output['cid'] = kwargs[key]
                 self.output['command'].append('-q')
                 self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]))
@@ -145,6 +145,17 @@ class Norma(Processor):
                 self.output['command'].append(k)
                 self.output['command'].append(kwargs[key])
 
+    def after(self, **kwargs):
+        if kwargs.get('cid',False):
+            self.output['store'] = 'http://store.cottagelabs.com/' + self.output['cid']
+            self.output['files'] = []
+            dr = current_app.config['STORAGE_DIR'] + self.output['cid']
+            listfiles = os.listdir(dr)
+            for fl in listfiles:
+                if 'scholarly.html' not in listfiles and fl.endswith('.html'):
+                    shutil.copy(os.path.join(dr, fl), os.path.join(dr, 'scholarly.html'))
+                    self.output['transposed'] = fl
+                self.output['files'].append(self.output['store'] + '/' + fl)
 
 '''how many -x are there? is there a list? - look in stylesheetbyname.xml
 
