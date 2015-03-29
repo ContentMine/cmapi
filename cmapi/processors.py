@@ -138,9 +138,9 @@ class Norma(Processor):
                 self.output['command'].append('-q')
                 self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]))
                 self.output['command'].append('--input')
-                self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]) + '/fulltext.xml')
+                self.output['command'].append('fulltext.xml')
                 self.output['command'].append('--output')
-                self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]) + '/scholarly.html')
+                self.output['command'].append('scholarly.html')
             else:
                 self.output['command'].append(k)
                 self.output['command'].append(kwargs[key])
@@ -156,6 +156,8 @@ class Norma(Processor):
                     shutil.copy(os.path.join(dr, fl), os.path.join(dr, 'scholarly.html'))
                     self.output['transposed'] = fl
                 self.output['files'].append(self.output['store'] + '/' + fl)
+            if 'scholarly.html' in listfiles:
+                self.output['shtml'] = self.output['store'] + '/scholarly.html'
 
 '''how many -x are there? is there a list? - look in stylesheetbyname.xml
 
