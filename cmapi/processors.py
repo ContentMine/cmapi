@@ -152,7 +152,7 @@ class Norma(Processor):
             dr = current_app.config['STORAGE_DIR'] + self.output['cid']
             listfiles = os.listdir(dr)
             for fl in listfiles:
-                if 'scholarly.html' not in listfiles and fl.endswith('.html'):
+                if 'scholarly.html' not in listfiles and fl.lower().endswith('.html'):
                     shutil.copy(os.path.join(dr, fl), os.path.join(dr, 'scholarly.html'))
                     self.output['transposed'] = fl
                 self.output['files'].append(self.output['store'] + '/' + fl)
@@ -229,7 +229,7 @@ class Retrieve(Processor):
             self.output['files'] = []
             self.output['retrieved'] = self.output['store'] + '/' + fn
             storedir = current_app.config['STORAGE_DIR'] + self.output['cid']
-            if fn.endswith('.pdf'):
+            if fn.lower().endswith('.pdf'):
                 try:
                     pcmd = [
                         'pdftotext',
@@ -243,7 +243,13 @@ class Retrieve(Processor):
                 except Exception, e:
                     self.output['output'] = {}
                     self.output['errors'] = [str(e)]
-            for fl in os.listdir(storedir):
+            fls = os.listdir(storedir)
+            for f in fls:
+                if 'fulltext.pdf' not in fls and f.lower().endswith('.pdf'):
+                    shutil.copy(os.path.join(storedir, fl), os.path.join(storedir, 'fulltext.pdf'))
+                if 'fulltext.html' not in fls and f.lower().endswith('.html'):
+                    shutil.copy(os.path.join(storedir, fl), os.path.join(storedir, 'fulltext.html'))
+            for fl in fls:
                 self.output['files'].append(self.output['store'] + '/' + fl)
 
                 
