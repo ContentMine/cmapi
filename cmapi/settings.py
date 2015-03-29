@@ -8,11 +8,21 @@ SECRET_KEY = "default-key"
 ADMIN_NAME = "Cottage Labs"
 ADMIN_EMAIL = "sysadmin@cottagelabs.com"
 
+# processors files info
+#STORAGE_DIR = '/home/cloo/storage_service/public/'
+#QS_JS_DIR = '/home/cloo/dev/contentmine/src/journal-scrapers/scrapers/'
+#QS_TMP_DIR = '/home/cloo/qstmp/'
+
+STORAGE_DIR = '/Users/one/sdir/'
+QS_JS_DIR = '/Users/one/Code/contentmine/src/journal-scrapers/scrapers/'
+QS_TMP_DIR = '/Users/one/qstmp/'
+
 # service info
 SERVICE_NAME = "ContentMine API"
 HOST = "0.0.0.0"
 DEBUG = True
 PORT = 5111
+WITH_ES = False
 ES_HOST = "http://localhost:9200/"
 ES_DB = "contentmine"
 ES_TYPE = "fact"

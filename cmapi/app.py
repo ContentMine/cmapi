@@ -19,9 +19,10 @@ def create_app():
     if os.path.exists(config_path):
         app.config.from_pyfile(config_path)
     login_manager.setup_app(app)
-    if requests.head(app.config['FACT_API']).status_code != 200:
-        requests.post(app.config['FACT_API'])
-        requests.put(app.config['MAPPING_URL'], json.dumps(app.config['MAPPING']))
+    if app.config.get('WITH_ES',False):
+        if requests.head(app.config['FACT_API']).status_code != 200:
+            requests.post(app.config['FACT_API'])
+            requests.put(app.config['MAPPING_URL'], json.dumps(app.config['MAPPING']))
     return app
 
 app = create_app()
@@ -29,6 +30,7 @@ app = create_app()
 @login_manager.user_loader
 def load_account_for_login_manager(userid):
     # TODO should actually get a user somehow here or return anonymous user
+    # connect to separate CL user auth tool
     return {}
 
 '''
@@ -97,7 +99,7 @@ def proc(procname=None):
         pr = getattr(processors, procname[0].capitalize() + procname[1:].lower() )
         params = request.json if request.json else request.values
         params = {k:params[k] for k in params.keys()}
-        return pr.run(**params)
+        return pr().run(**params)
     
     
     
