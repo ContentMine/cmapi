@@ -212,23 +212,26 @@ class Retrieve(Processor):
                 self.output['command'].append(storedir + '/' + kwargs['url'].split('/')[-1])
             
     def after(self, **kwargs):
-        turl = kwargs.get('u',kwargs.get('-u',kwargs.get('--url',kwargs.get('url',None))))
+        turl = kwargs.get('url',None)
         if turl is not None:
+            fn = turl.split('/')[-1]
             self.output['files'] = []
+            self.output['retrieved'] = self.output['store'] + '/' + fn
             storedir = current_app.config['STORAGE_DIR'] + self.output['cid']
-            for fl in os.listdir(storedir):
-                if fl.endswith('.pdf'):
-                    try:
-                        pcmd = [
-                            'pdftotext',
-                            os.path.join(storedir, fl),
-                            os.path.join(storedir, fl).replace('.pdf','.txt')
-                        ]
-                        p = subprocess.Popen(pcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        self.output['output'], self.output['errors'] = p.communicate()
-                    except Exception, e:
-                        self.output['output'] = {}
-                        self.output['errors'] = [str(e)]
+            if fn.endswith('.pdf'):
+                try:
+                    pcmd = [
+                        'pdftotext',
+                        os.path.join(storedir, fl),
+                        os.path.join(storedir, fl).replace('.pdf','.txt')
+                    ]
+                    p = subprocess.Popen(pcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    self.output['output'], self.output['errors'] = p.communicate()
+                    if len(self.output['errors']) == 0:
+                        self.output['unpdf'] = self.output['store'] + '/' + fn.replace('.pdf','.txt')
+                except Exception, e:
+                    self.output['output'] = {}
+                    self.output['errors'] = [str(e)]
             for fl in os.listdir(storedir):
                 self.output['files'].append(self.output['store'] + '/' + fl)
 
