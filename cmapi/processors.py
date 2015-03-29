@@ -114,7 +114,7 @@ class Quickscrape(Processor):
                 self.output['files'].append(self.output['store'] + '/' + fl)
                 if fl == 'bib.json':
                     try:
-                        self.output['bibjson'] = json.load(open(outdir + '/' + fl))
+                        self.output['bibjson'] = json.load(open(tmpdir + '/' + fl))
                     except:
                         pass
             shutil.rmtree(tmpdir)
