@@ -195,7 +195,7 @@ class Retrieve(Processor):
             if not os.path.exists(storedir):
                 os.makedirs(storedir)
             if 'url' in kwargs.keys():
-                self.output['command'].append(kwargs[key])
+                self.output['command'].append(kwargs['url'])
                 self.output['command'].append('-o')
                 self.output['command'].append(storedir + '/' + kwargs['url'].split('/')[-1])
             
