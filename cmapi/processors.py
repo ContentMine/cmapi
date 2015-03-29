@@ -263,6 +263,16 @@ class Retrieve(Processor):
                 except Exception, e:
                     self.output['output'] = {}
                     self.output['errors'] = [str(e)]
+            txt = None
+            flsa = os.listdir(storedir)
+            for fy in flsa:
+                if fy.endswith('.txt'): txt = fy
+            if txt is not None:
+                xfer = True
+                for fa in flsa:
+                    if fy.endswith('.html'): xfer = False
+                if xfer:
+                    shutil.copy(os.path.join(storedir, txt), os.path.join(storedir, 'fulltext.html'))
             fls = os.listdir(storedir)
             for f in fls:
                 if 'fulltext.pdf' not in fls and f.lower().endswith('.pdf'):
@@ -271,7 +281,7 @@ class Retrieve(Processor):
                     shutil.copy(os.path.join(storedir, f), os.path.join(storedir, 'fulltext.html'))
                 if 'fulltext.xml' not in fls and f.lower().endswith('.xml'):
                     shutil.copy(os.path.join(storedir, f), os.path.join(storedir, 'fulltext.xml'))
-            for fl in fls:
+            for fl in os.listdir(storedir):
                 self.output['files'].append(self.output['store'] + '/' + fl)
 
                 
