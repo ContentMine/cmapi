@@ -208,10 +208,11 @@ class Amiregex(Processor):
     def after(self, **kwargs):
         self.output['facts'] = []
         results_file = current_app.config['STORAGE_DIR'] + self.output['cid'] + '/results/regex/' + self.output['regex'] + '/results.xml'
-        ns = etree.FunctionNamespace("http://www.xml-cml.org/ami")
-        ns.prefix = "zf"
+        #ns = etree.FunctionNamespace("http://www.xml-cml.org/ami")
+        #ns.prefix = "zf"
         tree = etree.parse(results_file)
-        results = tree.xpath('//zf:result')
+        #results = tree.xpath('//zf:result')
+        results = tree.xpath('//result')
         for result in results:
             doc = {}
             doc["pre"] = result.get("pre")
