@@ -155,6 +155,7 @@ class Norma(Processor):
                 if 'scholarly.html' not in listfiles and fl.lower().endswith('.html'):
                     shutil.copy(os.path.join(dr, fl), os.path.join(dr, 'scholarly.html'))
                     self.output['transposed'] = fl
+                    self.output['shtml'] = self.output['store'] + '/scholarly.html'
                 self.output['files'].append(self.output['store'] + '/' + fl)
             if 'scholarly.html' in listfiles:
                 self.output['shtml'] = self.output['store'] + '/scholarly.html'
