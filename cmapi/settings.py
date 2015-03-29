@@ -12,6 +12,7 @@ ADMIN_EMAIL = "sysadmin@cottagelabs.com"
 STORAGE_DIR = '/home/cloo/storage_service/public/'
 QS_JS_DIR = '/home/cloo/dev/contentmine/src/journal-scrapers/scrapers/'
 QS_TMP_DIR = '/home/cloo/qstmp/'
+REGEXES_DIR = '/home/cloo/dev/contentmine/src/ami-regexes/'
 
 #STORAGE_DIR = '/Users/one/sdir/'
 #QS_JS_DIR = '/Users/one/Code/contentmine/src/journal-scrapers/scrapers/'

@@ -161,7 +161,6 @@ class Norma(Processor):
                 self.output['shtml'] = self.output['store'] + '/scholarly.html'
 
 '''how many -x are there? is there a list? - look in stylesheetbyname.xml
-
 /norma/src/main/resources ... /org/xmlcml/norma/pubstyle/stylesheetByName.xml
 <stylesheetList>
   <stylesheet name="nlm2html">/org/xmlcml/norma/pubstyle/nlm/toHtml.xsl</stylesheet>
@@ -173,17 +172,35 @@ class Norma(Processor):
 class Amiregex(Processor):
     def _cmd(self, **kwargs):
         self.output['command'] = ['/usr/bin/ami2-regex']
-        # if regex and no -g make it this /opt/contentmine/src/site/portality/ami-regexes/concatenated.xml
+        if 'r.r' not in kwargs.keys() and '-r.r' not in kwargs.keys() and '--r.regex' not in kwargs.keys():
+            self.output['command'].append('-r.r')
+            self.output['command'].append(current_app.config['REGEXES_DIR'] + 'concatenated.xml')
         for key in kwargs.keys():
             if not key.startswith('-'): k = '-' + key
-            if len(key) > 2: k = '-' + k
-            self.output['command'].append(k)
-            self.output['command'].append(kwargs[key])
-    
+            if len(key) > 2 and key != '-r.r': k = '-' + k
+            if k == '--cid':
+                self.output['cid'] = kwargs[key]
+                self.output['command'].append('-q')
+                self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]))
+                self.output['command'].append('--input')
+                self.output['command'].append('scholarly.html')
+                #self.output['command'].append('--output')
+                #self.output['command'].append('results')
+            elif k in ['-r.r','--r.regex']:
+                self.output['command'].append('-r.r')
+                if kwargs[key].startswith('http'):
+                    self.output['command'].append(kwargs[key])
+                else:
+                    self.output['command'].append(current_app.config['REGEXES_DIR'] + kwargs[key] + '.xml')
+            else:
+                self.output['command'].append(k)
+                self.output['command'].append(kwargs[key])
+            
+            
     def after(self, **kwargs):
         pass
         '''self.output['facts'] = []
-        results_file = /home/cloo/storage_service/public/ + cmd + '_results.xml'
+        results_file = current_app.config['STORAGE_DIR'] + cmd + '_results.xml'
 
         ns = etree.FunctionNamespace("http://www.xml-cml.org/ami")
         ns.prefix = "zf"
