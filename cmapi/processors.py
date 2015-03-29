@@ -177,6 +177,7 @@ class Amiregex(Processor):
         if 'r.r' not in kwargs.keys() and '-r.r' not in kwargs.keys() and '--r.regex' not in kwargs.keys():
             self.output['command'].append('-r.r')
             self.output['command'].append(current_app.config['REGEXES_DIR'] + 'concatenated.xml')
+            self.output['regex'] = 'concatenated'
         for key in kwargs.keys():
             k = key
             if not key.startswith('-'): k = '-' + k
@@ -195,29 +196,30 @@ class Amiregex(Processor):
                     self.output['command'].append(kwargs[key])
                 else:
                     self.output['command'].append(current_app.config['REGEXES_DIR'] + kwargs[key] + '.xml')
+                if kwargs[key] == 'astrophysics':
+                    self.output['regex'] = 'astrophys'
+                else:
+                    self.output['regex'] = kwargs[key]
             else:
                 self.output['command'].append(k)
                 self.output['command'].append(kwargs[key])
             
             
     def after(self, **kwargs):
-        pass
-        '''self.output['facts'] = []
-        results_file = current_app.config['STORAGE_DIR'] + cmd + '_results.xml'
-
+        self.output['facts'] = []
+        results_file = current_app.config['STORAGE_DIR'] + self.output['cid'] + '/results/regex/' + self.output['regex'] + '/results.xml'
         ns = etree.FunctionNamespace("http://www.xml-cml.org/ami")
         ns.prefix = "zf"
         tree = etree.parse(results_file)
-        hits = tree.xpath('//zf:hit')
-        for hit in hits:
+        hits = tree.xpath('//zf:result')
+        for result in results:
             doc = {}
-            doc["pre"] = hit.get("pre")
-            doc["fact"] = hit.get("word")
-            doc["post"] = hit.get("post")
+            doc["pre"] = result.get("pre")
+            doc["fact"] = result.get("value0")
+            doc["post"] = result.get("post")
             self.output['facts'].append(doc)
+        self.output['factcount'] = len(self.output['facts'])
         
-        shutil.move('target/fulltext.xml/results.xml', storagedirectory + '/' + cmd + '_results.xml')'''
-
         
 class Amiwords(Processor):
     def _cmd(self, **kwargs):
