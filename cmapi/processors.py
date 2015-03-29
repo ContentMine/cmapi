@@ -246,11 +246,11 @@ class Retrieve(Processor):
             fls = os.listdir(storedir)
             for f in fls:
                 if 'fulltext.pdf' not in fls and f.lower().endswith('.pdf'):
-                    shutil.copy(os.path.join(storedir, fl), os.path.join(storedir, 'fulltext.pdf'))
+                    shutil.copy(os.path.join(storedir, f), os.path.join(storedir, 'fulltext.pdf'))
                 if 'fulltext.html' not in fls and f.lower().endswith('.html'):
-                    shutil.copy(os.path.join(storedir, fl), os.path.join(storedir, 'fulltext.html'))
+                    shutil.copy(os.path.join(storedir, f), os.path.join(storedir, 'fulltext.html'))
                 if 'fulltext.xml' not in fls and f.lower().endswith('.xml'):
-                    shutil.copy(os.path.join(storedir, fl), os.path.join(storedir, 'fulltext.xml'))
+                    shutil.copy(os.path.join(storedir, f), os.path.join(storedir, 'fulltext.xml'))
             for fl in fls:
                 self.output['files'].append(self.output['store'] + '/' + fl)
 
