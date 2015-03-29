@@ -260,7 +260,7 @@ class Retrieve(Processor):
                 try:
                     pcmd = [
                         'pdftotext',
-                        os.path.join(storedir, fl),
+                        os.path.join(storedir, fn),
                         os.path.join(storedir, 'unpdf.txt')
                     ]
                     p = subprocess.Popen(pcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
