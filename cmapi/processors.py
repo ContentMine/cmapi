@@ -211,7 +211,7 @@ class Amiregex(Processor):
         ns = etree.FunctionNamespace("http://www.xml-cml.org/ami")
         ns.prefix = "zf"
         tree = etree.parse(results_file)
-        hits = tree.xpath('//zf:result')
+        results = tree.xpath('//zf:result')
         for result in results:
             doc = {}
             doc["pre"] = result.get("pre")
