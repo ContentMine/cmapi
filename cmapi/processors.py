@@ -256,17 +256,17 @@ class Retrieve(Processor):
             self.output['files'] = []
             self.output['retrieved'] = self.output['store'] + '/' + fn
             storedir = current_app.config['STORAGE_DIR'] + self.output['cid']
-            if fn.lower().endswith('.pdf'):
+            if fn.lower().endswith('pdf'):
                 try:
                     pcmd = [
                         'pdftotext',
                         os.path.join(storedir, fl),
-                        os.path.join(storedir, fl).replace('.pdf','.txt')
+                        os.path.join(storedir, 'unpdf.txt')
                     ]
                     p = subprocess.Popen(pcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     self.output['output'], self.output['errors'] = p.communicate()
                     if len(self.output['errors']) == 0:
-                        self.output['unpdf'] = self.output['store'] + '/' + fn.replace('.pdf','.txt')
+                        self.output['unpdf'] = self.output['store'] + '/unpdf.txt'
                 except Exception, e:
                     self.output['output'] = {}
                     self.output['errors'] = [str(e)]
