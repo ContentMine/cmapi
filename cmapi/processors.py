@@ -112,6 +112,11 @@ class Quickscrape(Processor):
             for fl in os.listdir(tmpdir):
                 shutil.copy(os.path.join(tmpdir, fl), outdir)
                 self.output['files'].append(self.output['store'] + '/' + fl)
+                if fl == 'bib.json':
+                    try:
+                        self.output['bibjson'] = json.load(open(outdir + '/' + fl))
+                    except:
+                        pass
             shutil.rmtree(tmpdir)
 
         
