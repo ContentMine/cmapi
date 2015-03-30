@@ -302,7 +302,7 @@ class Retrieve(Processor):
                     for line in content.readlines():
                         if len(line.strip().rstrip('\n')) == 0:
                             if not outofpara:
-                                new += '</p>'
+                                new += '</p>\n\n'
                                 outofpara = True
                         else:
                             if outofpara:
