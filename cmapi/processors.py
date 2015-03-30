@@ -16,7 +16,7 @@ It can also be programmed using the available overwriteable methods to store the
 Make sure to use class names that start with one upper case letter and the rest lower case.
 '''
 
-import uuid, subprocess, os, shutil, json, requests
+import uuid, subprocess, os, shutil, json, requests, time
 from lxml import etree
 from flask import current_app
 
@@ -126,7 +126,7 @@ class Quickscrape(Processor):
 class Norma(Processor):
     def _cmd(self, **kwargs):
         self.output['command'] = ['norma']
-        if len(kwargs.keys()) > 0 and '-x' not in kwargs.keys() and 'xsl' not in kwargs.keys() and '--xsl' not in kwargs.keys() and 'x' not in kwargs.keys():
+        if len(kwargs.keys()) > 0 and 'x' not in kwargs.keys() '-x' not in kwargs.keys() and 'xsl' not in kwargs.keys() and '--xsl' not in kwargs.keys() and 'x' not in kwargs.keys():
             #self.output['command'].append('--xsl')
             #self.output['command'].append('/org/xmlcml/norma/pubstyle/nlm/toHtml.xsl')
             self.output['command'].append('-x')
@@ -210,15 +210,23 @@ class Amiregex(Processor):
         results_file = current_app.config['STORAGE_DIR'] + self.output['cid'] + '/results/regex/' + self.output['regex'] + '/results.xml'
         #ns = etree.FunctionNamespace("http://www.xml-cml.org/ami")
         #ns.prefix = "zf"
-        tree = etree.parse(results_file)
-        #results = tree.xpath('//zf:result')
-        results = tree.xpath('//result')
-        for result in results:
-            doc = {}
-            doc["pre"] = result.get("pre")
-            doc["fact"] = result.get("value0")
-            doc["post"] = result.get("post")
-            self.output['facts'].append(doc)
+        counter = 0
+        success = False
+        while counter < 4 and not success:
+            try:
+                tree = etree.parse(results_file)
+                #results = tree.xpath('//zf:result')
+                results = tree.xpath('//result')
+                for result in results:
+                    doc = {}
+                    doc["pre"] = result.get("pre")
+                    doc["fact"] = result.get("value0")
+                    doc["post"] = result.get("post")
+                    self.output['facts'].append(doc)
+                success = True
+            except:
+                counter += 1
+                time.sleep(10)
         self.output['factcount'] = len(self.output['facts'])
         
         
@@ -229,8 +237,15 @@ class Amiwords(Processor):
             k = key
             if not key.startswith('-'): k = '-' + k
             if len(key) > 2: k = '-' + k
-            self.output['command'].append(k)
-            self.output['command'].append(kwargs[key])
+            if k == '--cid':
+                self.output['cid'] = kwargs[key]
+                self.output['command'].append('-q')
+                self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]))
+                self.output['command'].append('--input')
+                self.output['command'].append('scholarly.html')
+            else:
+                self.output['command'].append(k)
+                self.output['command'].append(kwargs[key])
 
             
 class Retrieve(Processor):
@@ -270,6 +285,7 @@ class Retrieve(Processor):
                 except Exception, e:
                     self.output['output'] = {}
                     self.output['errors'] = [str(e)]
+                    print selt.output
             txt = None
             flsa = os.listdir(storedir)
             for fy in flsa:
