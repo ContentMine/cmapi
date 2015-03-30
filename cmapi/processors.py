@@ -296,7 +296,7 @@ class Retrieve(Processor):
                     if fy.endswith('.html'): xfer = False
                 if xfer:
                     new = '<html><head></head><body><p>'
-                    content = open(os.path.join(storedir, txt))
+                    content = open(os.path.join(storedir, txt),'r')
                     outofpara = False
                     for line in content.readlines():
                         if len(line) == 0:
@@ -308,6 +308,7 @@ class Retrieve(Processor):
                                 new += '<p>'
                                 outofpara = False
                             new += line.rstrip('\n')
+                    content.close()
                     new += '</p></body></html>'
                     nf = open(storedir + 'fulltext.html')
                     nf.write(new)
