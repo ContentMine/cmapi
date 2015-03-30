@@ -300,7 +300,7 @@ class Retrieve(Processor):
                     content = open(os.path.join(storedir, txt),'r')
                     outofpara = False
                     for line in content.readlines():
-                        if len(line) == 0:
+                        if len(line.strip().rstrip('\n')) == 0:
                             if not outofpara:
                                 new += '</p>'
                                 outofpara = True
