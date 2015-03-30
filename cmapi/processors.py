@@ -126,7 +126,7 @@ class Quickscrape(Processor):
 class Norma(Processor):
     def _cmd(self, **kwargs):
         self.output['command'] = ['norma']
-        if len(kwargs.keys()) > 0 and 'x' not in kwargs.keys() '-x' not in kwargs.keys() and 'xsl' not in kwargs.keys() and '--xsl' not in kwargs.keys() and 'x' not in kwargs.keys():
+        if len(kwargs.keys()) > 0 and 'x' not in kwargs.keys() and '-x' not in kwargs.keys() and 'xsl' not in kwargs.keys() and '--xsl' not in kwargs.keys() and 'x' not in kwargs.keys():
             #self.output['command'].append('--xsl')
             #self.output['command'].append('/org/xmlcml/norma/pubstyle/nlm/toHtml.xsl')
             self.output['command'].append('-x')
