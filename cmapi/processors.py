@@ -275,6 +275,7 @@ class Retrieve(Processor):
                 try:
                     pcmd = [
                         'pdftotext',
+                        '-nopgbrk',
                         os.path.join(storedir, fn),
                         os.path.join(storedir, 'unpdf.txt')
                     ]
@@ -285,7 +286,6 @@ class Retrieve(Processor):
                 except Exception, e:
                     self.output['output'] = {}
                     self.output['errors'] = [str(e)]
-                    print selt.output
             txt = None
             flsa = os.listdir(storedir)
             for fy in flsa:
@@ -295,7 +295,24 @@ class Retrieve(Processor):
                 for fa in flsa:
                     if fy.endswith('.html'): xfer = False
                 if xfer:
-                    shutil.copy(os.path.join(storedir, txt), os.path.join(storedir, 'fulltext.html'))
+                    new = '<html><head></head><body><p>'
+                    content = open(os.path.join(storedir, txt))
+                    outofpara = False
+                    for line in content.readlines():
+                        if len(line) == 0:
+                            if not outofpara:
+                                new += '</p>'
+                                outofpara = True
+                        else:
+                            if outofpara:
+                                new += '<p>'
+                                outofpara = False
+                            new += line.rstrip('\n')
+                    new += '</p></body></html>'
+                    nf = open(storedir + 'fulltext.html')
+                    nf.write(new)
+                    nf.close()
+                    self.output['txt2html'] = storedir + 'fulltext.html'
             fls = os.listdir(storedir)
             for f in fls:
                 if 'fulltext.pdf' not in fls and f.lower().endswith('.pdf'):
