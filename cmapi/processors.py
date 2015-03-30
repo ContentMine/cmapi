@@ -311,10 +311,10 @@ class Retrieve(Processor):
                             new += line.rstrip('\n')
                     content.close()
                     new += '</p></body></html>'
-                    nf = open(storedir + 'fulltext.html')
+                    nf = open(storedir + '/fulltext.html','w')
                     nf.write(new)
                     nf.close()
-                    self.output['txt2html'] = storedir + 'fulltext.html'
+                    self.output['txt2html'] = storedir + '/fulltext.html'
             fls = os.listdir(storedir)
             for f in fls:
                 if 'fulltext.pdf' not in fls and f.lower().endswith('.pdf'):
