@@ -286,6 +286,7 @@ class Retrieve(Processor):
                 except Exception, e:
                     self.output['output'] = {}
                     self.output['errors'] = [str(e)]
+                    print self.output
             txt = None
             flsa = os.listdir(storedir)
             for fy in flsa:
