@@ -85,6 +85,7 @@ def rjson(f):
 
 @app.route('/', methods=['GET','POST'])
 @app.route('/<procname>', methods=['GET','POST'])
+@app.route('/<procname>/meta')
 @rjson
 def proc(procname=None):
     if procname is None:
@@ -95,6 +96,9 @@ def proc(procname=None):
             "processors": [name.lower() for name, obj in inspect.getmembers(processors) if inspect.isclass(obj) and name != 'Processor'],
             "routes": ["fact"]
         }
+    elif request.path.endswith('meta'):
+        pr = getattr(processors, procname[0].capitalize() + procname[1:].lower() )
+        return pr().meta()
     else:
         pr = getattr(processors, procname[0].capitalize() + procname[1:].lower() )
         params = request.json if request.json else request.values

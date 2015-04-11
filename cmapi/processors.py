@@ -51,7 +51,10 @@ class Processor(object):
     
     def after(self, **kwargs):
         pass
-            
+    
+    def meta(self):
+        return {} # a method to return any metadata that may be needed by UI to build user options
+        
     def run(self, before=True,after=True,store=True,save=True,**kwargs):
         # check for dodgy characters in the kwargs
         if 'callback' in kwargs: del kwargs['callback']
@@ -172,6 +175,13 @@ class Norma(Processor):
 
             
 class Amiregex(Processor):
+    def meta(self):
+        # TODO: this should be set by app config...
+        r = {'regexes':[]}
+        for fl in os.listdir('/home/cloo/dev/src/contentmine/ami-regexes/'):
+            r['regexes'].append(fl.replace('.xml',''))
+        return r
+        
     def _cmd(self, **kwargs):
         self.output['command'] = ['/usr/bin/ami2-regex']
         if 'r.r' not in kwargs.keys() and '-r.r' not in kwargs.keys() and '--r.regex' not in kwargs.keys():
@@ -196,10 +206,7 @@ class Amiregex(Processor):
                     self.output['command'].append(kwargs[key])
                 else:
                     self.output['command'].append(current_app.config['REGEXES_DIR'] + kwargs[key] + '.xml')
-                if kwargs[key] == 'astrophysics':
-                    self.output['regex'] = 'astrophys'
-                else:
-                    self.output['regex'] = kwargs[key]
+                self.output['regex'] = kwargs[key]
             else:
                 self.output['command'].append(k)
                 self.output['command'].append(kwargs[key])
@@ -230,9 +237,9 @@ class Amiregex(Processor):
         self.output['factcount'] = len(self.output['facts'])
         
         
-class Amiwords(Processor):
+class Amiword(Processor):
     def _cmd(self, **kwargs):
-        self.output['command'] = ['/usr/bin/ami2-words']
+        self.output['command'] = ['/usr/bin/ami2-word']
         for key in kwargs.keys():
             k = key
             if not key.startswith('-'): k = '-' + k
