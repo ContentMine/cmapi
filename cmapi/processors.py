@@ -178,8 +178,11 @@ class Amiregex(Processor):
     def meta(self):
         # TODO: this should be set by app config...
         r = {'regexes':[]}
-        for fl in os.listdir('/home/cloo/dev/src/contentmine/ami-regexes/'):
-            r['regexes'].append(fl.replace('.xml',''))
+        try:
+            for fl in os.listdir(current_app.config['REGEXES_DIR']):
+                r['regexes'].append(fl.replace('.xml',''))
+        except:
+            pass
         return r
         
     def _cmd(self, **kwargs):
