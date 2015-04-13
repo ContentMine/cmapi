@@ -293,7 +293,6 @@ class Amispecies(Processor):
         self.output['factcount'] = len(self.output['facts'])
 
 
-        
 class Amiidentifier(Processor):
     def _cmd(self, **kwargs):
         self.output['command'] = ['/usr/bin/ami2-identifier']
@@ -319,6 +318,27 @@ class Amiidentifier(Processor):
                 self.output['command'].append(k)
                 self.output['command'].append(kwargs[key])
  
+    def after(self, **kwargs):
+        self.output['facts'] = []
+        if 'cid' in self.output:
+            results_file = current_app.config['STORAGE_DIR'] + self.output['cid'] + '/results/identifier/results.xml'
+            counter = 0
+            success = False
+            while counter < 4 and not success:
+                try:
+                    tree = etree.parse(results_file)
+                    results = tree.xpath('//result')
+                    for result in results:
+                        doc = {}
+                        doc["pre"] = result.get("pre")
+                        doc["fact"] = result.get("exact")
+                        doc["post"] = result.get("post")
+                        self.output['facts'].append(doc)
+                    success = True
+                except:
+                    counter += 1
+                    time.sleep(10)
+        self.output['factcount'] = len(self.output['facts'])
 
 
 
@@ -357,24 +377,7 @@ class Amisequence(Processor):
             else:
                 self.output['command'].append(k)
                 self.output['command'].append(kwargs[key])
-
                 
-class Amiidentifier(Processor):
-    def _cmd(self, **kwargs):
-        self.output['command'] = ['/usr/bin/ami2-identifier']
-        for key in kwargs.keys():
-            k = key
-            if not key.startswith('-'): k = '-' + k
-            if len(key) > 2: k = '-' + k
-            if k == '--cid':
-                self.output['cid'] = kwargs[key]
-                self.output['command'].append('-q')
-                self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]))
-                self.output['command'].append('--input')
-                self.output['command'].append('scholarly.html')
-            else:
-                self.output['command'].append(k)
-                self.output['command'].append(kwargs[key])
 '''
 
             
