@@ -281,7 +281,7 @@ class Amispecies(Processor):
                             doc = {}
                             doc["pre"] = result.get("pre")
                             doc["exact"] = result.get("exact")
-                            doc["match"] = result.get("match")
+                            doc["fact"] = result.get("fact")
                             doc["post"] = result.get("post")
                             doc["name"] = result.get("name")
                             self.output['facts'].append(doc)
