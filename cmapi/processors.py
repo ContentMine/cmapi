@@ -217,26 +217,27 @@ class Amiregex(Processor):
             
     def after(self, **kwargs):
         self.output['facts'] = []
-        results_file = current_app.config['STORAGE_DIR'] + self.output['cid'] + '/results/regex/' + self.output['regex'] + '/results.xml'
-        #ns = etree.FunctionNamespace("http://www.xml-cml.org/ami")
-        #ns.prefix = "zf"
-        counter = 0
-        success = False
-        while counter < 4 and not success:
-            try:
-                tree = etree.parse(results_file)
-                #results = tree.xpath('//zf:result')
-                results = tree.xpath('//result')
-                for result in results:
-                    doc = {}
-                    doc["pre"] = result.get("pre")
-                    doc["fact"] = result.get("value0")
-                    doc["post"] = result.get("post")
-                    self.output['facts'].append(doc)
-                success = True
-            except:
-                counter += 1
-                time.sleep(10)
+        if 'cid' in self.output:
+            results_file = current_app.config['STORAGE_DIR'] + self.output['cid'] + '/results/regex/' + self.output['regex'] + '/results.xml'
+            #ns = etree.FunctionNamespace("http://www.xml-cml.org/ami")
+            #ns.prefix = "zf"
+            counter = 0
+            success = False
+            while counter < 4 and not success:
+                try:
+                    tree = etree.parse(results_file)
+                    #results = tree.xpath('//zf:result')
+                    results = tree.xpath('//result')
+                    for result in results:
+                        doc = {}
+                        doc["pre"] = result.get("pre")
+                        doc["fact"] = result.get("value0")
+                        doc["post"] = result.get("post")
+                        self.output['facts'].append(doc)
+                    success = True
+                except:
+                    counter += 1
+                    time.sleep(10)
         self.output['factcount'] = len(self.output['facts'])
 
         
@@ -267,26 +268,27 @@ class Amispecies(Processor):
 
     def after(self, **kwargs):
         self.output['facts'] = []
-        for tp in ['binomial','genus','genussp']:
-            results_file = current_app.config['STORAGE_DIR'] + self.output['cid'] + '/results/species/' + tp + '/results.xml'
-            counter = 0
-            success = False
-            while counter < 4 and not success:
-                try:
-                    tree = etree.parse(results_file)
-                    results = tree.xpath('//result')
-                    for result in results:
-                        doc = {}
-                        doc["pre"] = result.get("pre")
-                        doc["exact"] = result.get("exact")
-                        doc["match"] = result.get("match")
-                        doc["post"] = result.get("post")
-                        doc["name"] = result.get("name")
-                        self.output['facts'].append(doc)
-                    success = True
-                except:
-                    counter += 1
-                    time.sleep(10)
+        if 'cid' in self.output:
+            for tp in ['binomial','genus','genussp']:
+                results_file = current_app.config['STORAGE_DIR'] + self.output['cid'] + '/results/species/' + tp + '/results.xml'
+                counter = 0
+                success = False
+                while counter < 4 and not success:
+                    try:
+                        tree = etree.parse(results_file)
+                        results = tree.xpath('//result')
+                        for result in results:
+                            doc = {}
+                            doc["pre"] = result.get("pre")
+                            doc["exact"] = result.get("exact")
+                            doc["match"] = result.get("match")
+                            doc["post"] = result.get("post")
+                            doc["name"] = result.get("name")
+                            self.output['facts'].append(doc)
+                        success = True
+                    except:
+                        counter += 1
+                        time.sleep(10)
         self.output['factcount'] = len(self.output['facts'])
 
         
