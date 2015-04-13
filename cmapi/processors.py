@@ -207,9 +207,10 @@ class Amiregex(Processor):
                 self.output['command'].append('-r.r')
                 if kwargs[key].startswith('http'):
                     self.output['command'].append(kwargs[key])
+                    self.output['regex'] = 'web'
                 else:
                     self.output['command'].append(current_app.config['REGEXES_DIR'] + kwargs[key] + '.xml')
-                self.output['regex'] = kwargs[key]
+                    self.output['regex'] = kwargs[key]
             else:
                 self.output['command'].append(k)
                 self.output['command'].append(kwargs[key])
@@ -291,7 +292,36 @@ class Amispecies(Processor):
                         time.sleep(10)
         self.output['factcount'] = len(self.output['facts'])
 
+
         
+class Amiidentifier(Processor):
+    def _cmd(self, **kwargs):
+        self.output['command'] = ['/usr/bin/ami2-identifier']
+        for key in kwargs.keys():
+            k = key
+            if not key.startswith('-'): k = '-' + k
+            if len(key) > 2: k = '-' + k
+            if k == '--cid':
+                self.output['cid'] = kwargs[key]
+                self.output['command'].append('-q')
+                self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]))
+                self.output['command'].append('--input')
+                self.output['command'].append('scholarly.html')
+                self.output['command'].append('--context')
+                self.output['command'].append('35')
+                self.output['command'].append('50')
+                self.output['command'].append('--id.identifier')
+                self.output['command'].append('--id.regex')
+                self.output['command'].append(current_app.config['REGEXES_DIR'] + 'identifiers.xml')
+                # ami2-identifier -q ~/workshop/02_ami/plos_one_latest_10 -i scholarly.html --context 25 40 --id.identifier --id.regex ~/workshop/02_ami/regex/identifiers.xml --id.type clin.nct clin.iscrtn
+
+            else:
+                self.output['command'].append(k)
+                self.output['command'].append(kwargs[key])
+ 
+
+
+
 '''        
 class Amiword(Processor):
     def _cmd(self, **kwargs):
