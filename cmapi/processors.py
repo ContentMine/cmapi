@@ -238,8 +238,59 @@ class Amiregex(Processor):
                 counter += 1
                 time.sleep(10)
         self.output['factcount'] = len(self.output['facts'])
+
         
+class Amispecies(Processor):
+    def _cmd(self, **kwargs):
+        self.output['command'] = ['/usr/bin/ami2-species']
+        for key in kwargs.keys():
+            k = key
+            if not key.startswith('-'): k = '-' + k
+            if len(key) > 2: k = '-' + k
+            if k == '--cid':
+                self.output['cid'] = kwargs[key]
+                self.output['command'].append('-q')
+                self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]))
+                self.output['command'].append('--input')
+                self.output['command'].append('scholarly.html')
+                self.output['command'].append('--sp.species')
+                self.output['command'].append('--context')
+                self.output['command'].append('35')
+                self.output['command'].append('50')
+                self.output['command'].append('--sp.type')
+                self.output['command'].append('binomial')
+                self.output['command'].append('genus')
+                self.output['command'].append('genussp')
+            else:
+                self.output['command'].append(k)
+                self.output['command'].append(kwargs[key])
+
+    def after(self, **kwargs):
+        self.output['facts'] = []
+        for tp in ['binomial','genus','genussp']:
+            results_file = current_app.config['STORAGE_DIR'] + self.output['cid'] + '/results/species/' + tp + '/results.xml'
+            counter = 0
+            success = False
+            while counter < 4 and not success:
+                try:
+                    tree = etree.parse(results_file)
+                    results = tree.xpath('//result')
+                    for result in results:
+                        doc = {}
+                        doc["pre"] = result.get("pre")
+                        doc["exact"] = result.get("exact")
+                        doc["match"] = result.get("match")
+                        doc["post"] = result.get("post")
+                        doc["name"] = result.get("name")
+                        self.output['facts'].append(doc)
+                    success = True
+                except:
+                    counter += 1
+                    time.sleep(10)
+        self.output['factcount'] = len(self.output['facts'])
+
         
+'''        
 class Amiword(Processor):
     def _cmd(self, **kwargs):
         self.output['command'] = ['/usr/bin/ami2-word']
@@ -256,6 +307,43 @@ class Amiword(Processor):
             else:
                 self.output['command'].append(k)
                 self.output['command'].append(kwargs[key])
+
+                                
+class Amisequence(Processor):
+    def _cmd(self, **kwargs):
+        self.output['command'] = ['/usr/bin/ami2-sequence']
+        for key in kwargs.keys():
+            k = key
+            if not key.startswith('-'): k = '-' + k
+            if len(key) > 2: k = '-' + k
+            if k == '--cid':
+                self.output['cid'] = kwargs[key]
+                self.output['command'].append('-q')
+                self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]))
+                self.output['command'].append('--input')
+                self.output['command'].append('scholarly.html')
+            else:
+                self.output['command'].append(k)
+                self.output['command'].append(kwargs[key])
+
+                
+class Amiidentifier(Processor):
+    def _cmd(self, **kwargs):
+        self.output['command'] = ['/usr/bin/ami2-identifier']
+        for key in kwargs.keys():
+            k = key
+            if not key.startswith('-'): k = '-' + k
+            if len(key) > 2: k = '-' + k
+            if k == '--cid':
+                self.output['cid'] = kwargs[key]
+                self.output['command'].append('-q')
+                self.output['command'].append(current_app.config['STORAGE_DIR'] + str(kwargs[key]))
+                self.output['command'].append('--input')
+                self.output['command'].append('scholarly.html')
+            else:
+                self.output['command'].append(k)
+                self.output['command'].append(kwargs[key])
+'''
 
             
 class Retrieve(Processor):
@@ -298,6 +386,7 @@ class Retrieve(Processor):
                     self.output['errors'] = [str(e)]
                     print self.output
             txt = None
+            time.sleep(5)
             flsa = os.listdir(storedir)
             for fy in flsa:
                 if fy.endswith('.txt'): txt = fy
