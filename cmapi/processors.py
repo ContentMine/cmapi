@@ -311,7 +311,7 @@ class Amiidentifier(Processor):
                 self.output['command'].append('50')
                 self.output['command'].append('--id.identifier')
                 self.output['command'].append('--id.regex')
-                self.output['command'].append(current_app.config['REGEXES_DIR'] + 'identifiers.xml')
+                self.output['command'].append('/home/cloo/dev/contentmine/src/identifiers.xml') # TODO: this should NOT be a hardcoded file :)
                 # ami2-identifier -q ~/workshop/02_ami/plos_one_latest_10 -i scholarly.html --context 25 40 --id.identifier --id.regex ~/workshop/02_ami/regex/identifiers.xml --id.type clin.nct clin.iscrtn
 
             else:
