@@ -17,9 +17,8 @@ Make sure to use class names that start with one upper case letter and the rest 
 '''
 
 import uuid, subprocess, os, shutil, json, requests, time
-from lxml import etree
 from flask import current_app
-
+from cmapi.translator import Translator as translator
 
 class Processor(object):
     def __init__(self):
@@ -226,15 +225,8 @@ class Amiregex(Processor):
             success = False
             while counter < 4 and not success:
                 try:
-                    tree = etree.parse(results_file)
-                    #results = tree.xpath('//zf:result')
-                    results = tree.xpath('//result')
-                    for result in results:
-                        doc = {}
-                        doc["pre"] = result.get("pre")
-                        doc["fact"] = result.get("value0")
-                        doc["post"] = result.get("post")
-                        self.output['facts'].append(doc)
+                    t = translator(processor='amispecies')
+                    self.output['facts'] += t.translate(results_file)
                     success = True
                 except:
                     counter += 1
@@ -276,16 +268,8 @@ class Amispecies(Processor):
                 success = False
                 while counter < 4 and not success:
                     try:
-                        tree = etree.parse(results_file)
-                        results = tree.xpath('//result')
-                        for result in results:
-                            doc = {}
-                            doc["pre"] = result.get("pre")
-                            doc["exact"] = result.get("exact")
-                            doc["fact"] = result.get("match")
-                            doc["post"] = result.get("post")
-                            doc["name"] = result.get("name")
-                            self.output['facts'].append(doc)
+                        t = translator(processor='amispecies')
+                        self.output['facts'] += t.translate(results_file)
                         success = True
                     except:
                         counter += 1
@@ -326,14 +310,8 @@ class Amiidentifier(Processor):
             success = False
             while counter < 4 and not success:
                 try:
-                    tree = etree.parse(results_file)
-                    results = tree.xpath('//result')
-                    for result in results:
-                        doc = {}
-                        doc["pre"] = result.get("pre")
-                        doc["fact"] = result.get("exact")
-                        doc["post"] = result.get("post")
-                        self.output['facts'].append(doc)
+                    t = translator(processor='amiidentifier')
+                    self.output['facts'] += t.translate(results_file)
                     success = True
                 except:
                     counter += 1

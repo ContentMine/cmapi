@@ -9,7 +9,8 @@ ADMIN_NAME = "Cottage Labs"
 ADMIN_EMAIL = "sysadmin@cottagelabs.com"
 
 # processors files info
-STORAGE_DIR = '/home/cloo/storage_service/public/'
+#STORAGE_DIR = '/home/cloo/storage_service/public/'
+STORAGE_DIR = '/home/cloo/proctmp/'
 QS_JS_DIR = '/home/cloo/dev/contentmine/src/journal-scrapers/scrapers/'
 QS_TMP_DIR = '/home/cloo/qstmp/'
 REGEXES_DIR = '/home/cloo/dev/contentmine/src/ami-regexes/'

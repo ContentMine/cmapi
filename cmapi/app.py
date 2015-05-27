@@ -3,10 +3,11 @@ import os, requests, json, uuid, inspect
 from functools import wraps
 from datetime import datetime
 
-from flask import Flask, request, make_response, current_app, abort
+from flask import Flask, request, make_response, current_app, abort, redirect
 from flask.ext.login import LoginManager, current_user, login_user
 
 from cmapi import settings, processors
+from cmapi.translator import Translator as translator
 
 login_manager = LoginManager()
 
@@ -264,6 +265,29 @@ def next():
         abort(404)
 
 
+@app.route('/receive', methods=['GET','POST'])
+@app.route('/receive/<processor>/<tag>', methods=['GET','POST'])
+@rjson
+def receive(processor=None,tag=None):
+    if request.method == 'GET':
+        return {'howto': 'POST a results file from one of the AMI processors to an extension of this URL, extended with the processor you used, and a tag to identify the fact group you wish to put the results into'}
+    elif request.method == 'POST':
+        if processor is None or tag is None:
+            return redirect('/receive')
+        else:
+            try:
+                fl = request.files['file']
+                t = translator(processor=processor)
+                results = t.translate(fl)
+                for res in results:
+                    res['set'] = tag
+                    res['processor'] = processor
+                    requests.post('http://contentmine.org/api/fact', data=json.dumps(res))
+            except:
+                abort(404)
+    else:
+        abort(404)
+        
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=app.config['DEBUG'], port=app.config['PORT'])
